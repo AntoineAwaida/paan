@@ -142,7 +142,7 @@ export default class Local extends React.Component {
                         <FormFeedback tooltip> Adresse mail invalide. </FormFeedback>
                     </FormGroup>
                     <FormGroup>
-                        <Label for="password">Test Mot de passefessf</Label>
+                        <Label for="password">Test Mot de passsefessf</Label>
                         <Input type="password" invalid={this.state.invalidPassword} value={this.state.password} name="password" id="password" onChange={this.handleInputChange} />
                         <FormFeedback tooltip>Mot de passe incorrect. Il doit contenir au moins 8 caractères, des caractères majuscules et minuscules, des chiffres et des lettres.</FormFeedback>
                     </FormGroup>
