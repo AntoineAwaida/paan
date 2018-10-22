@@ -19,17 +19,24 @@ let UserSchema = new Schema({
 UserSchema.pre('save', function(next) {
     let user = this;
     //sel
-    bcrypt.genSalt(SALT_WORK_FACTOR, function(err,salt) {
-        if(err) return next(err);
-    
-        //hash
-        bcrypt.hash(user.password,salt,function(err,hash) {
+    if (user.password){
+        bcrypt.genSalt(SALT_WORK_FACTOR, function(err,salt) {
             if(err) return next(err);
-
-            user.password = hash;
-            next();
+        
+            //hash
+            bcrypt.hash(user.password,salt,function(err,hash) {
+                if(err) return next(err);
+    
+                user.password = hash;
+                next();
+            })
         })
-    })
+
+
+    }
+
+    next();
+   
 })
 
 
