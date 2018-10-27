@@ -149,7 +149,7 @@ app.prepare()
 
 
     server.get('/review',(req,res) => {
-        Review.find((err, reviews) => {
+        Review.find({},null,{sort:'-date_of_submit'},function(err, reviews) {
             if (err) return next (err);
             res.json(reviews);
         })
@@ -171,25 +171,66 @@ app.prepare()
       })
     })
 
+    //Upload new password
+    server.put('/newpassword/:id', (req,res,err) => {
 
+      User.findById(req.params.id, function(err,user){
+        if (err) return next(err);
+        user.password = req.body.name;
+        user.save();
+
+        return res.status(200).send('Utilisateur bien modifié!');
+      })
+
+    })
+
+
+    //Upload new name
+    server.put('/newname/:id', (req,res,err) => {
+
+      User.findById(req.params.id, function(err,user){
+        if (err) return next(err);
+        user.username = req.body.name;
+        user.save();
+
+        return res.status(200).send('Utilisateur bien modifié!');
+      })
+
+    })
 
     //Upload profile picture
-    server.post('/uploadpp/:id', upload.single('profilePicture'), (req,res,err) => {
+    server.post('/uploadpp/:id', (req,res,err) => {
 
-    
-    
-      User.findById(req.params.id, function(err,user){
+      const avatarUpload = upload.single('profilePicture');
 
-        user.photoURL = req.file.path;
-        user.save( function(err) {
-            if(err) {
-                return res.send(500, err);
-            }
+      avatarUpload(req, res, function(err) {
+        if (err) {
+            console.log("coucou");
+            return res.status(500).send("Erreur au cours de l'envoi de l'image. L'image ne doit pas excéder 512x512 px, et être au format jpeg ou png.");
+        }
 
-        });
+        User.findById(req.params.id, function(err,user){
+
+          user.photoURL = req.file.path;
+          user.save( function(err) {
+              if(err) {
+                return  res.status(500).send("Erreur lors de la sauvegarde.");
+              }
+
+              return res.status(200).send('Profil bien modifié!');
+  
+          });
         })
-      res.status(200).send('ok');
+      });
 
+    
+      
+    
+      
+      
+     
+
+      
     })
 
 
@@ -298,7 +339,7 @@ app.prepare()
     })
 
 
-    //
+    //post review
 
 
     server.post('/review',(req,res,err) => {
@@ -306,7 +347,6 @@ app.prepare()
         review.save(function(err){
           if(err) {
             res.status(500).send('failure')
-            throw err
           }
         })
         res.status(200).send('success')

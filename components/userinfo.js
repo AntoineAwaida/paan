@@ -4,7 +4,7 @@ import {Card, Button,Col} from 'reactstrap'
 
 import Link from 'next/link'
 
-const globalstyle = require('../config/globalstyle')
+const globals = require('../config/globals')
 
 export default class UserInfo extends React.Component {
 
@@ -19,7 +19,7 @@ render() {
             <React.Fragment>
             <Col>
             <Link href={`/profile`}>
-                <img style={globalstyle.profilepicture} src={this.props.user.photoURL}/>
+                <img style={globals.profilepicture} src={globals.domain + this.props.user.photoURL}/>
             </Link>
             </Col>
             <Col>

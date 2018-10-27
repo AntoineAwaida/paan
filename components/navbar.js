@@ -11,7 +11,7 @@ import Chat from './chat/chat'
 
 import io from "socket.io-client";
 
-const globalstyle = require('../config/globalstyle');
+const globalstyle = require('../config/globals');
 
 
 

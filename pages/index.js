@@ -41,15 +41,6 @@ export default class Index extends React.Component {
 
   async componentDidMount(){
 
-    let result = await import('react-chat-widget')
-      Widget = result.Widget
-      addResponseMessage = result.addResponseMessage
-      this.setState({
-          appIsMounted: true
-      })
-
-      addResponseMessage("Welcome to this awesome chat!");
-
     
 
     const api = 'http://localhost:3000/review';
@@ -60,12 +51,8 @@ export default class Index extends React.Component {
         reviewlist: data
     })
 
-}
 
-handleNewUserMessage = (newMessage) => {
-  // Now send the message throught the backend API
 }
-
   render(){
 
 
