@@ -8,6 +8,9 @@ import {FaWindowClose} from 'react-icons/fa';
 import io from "socket.io-client";
 
 
+const globalstyle = require('../../config/globalstyle');
+
+
 const card = {
     position:"fixed",
     bottom:"0",
@@ -311,7 +314,7 @@ export default class Chat extends React.Component {
                             <Button value={user} onClick={() => this.userSelectedHandler(user)}>
                             
                             
-                        {user.photoURL && <img src={user.photoURL} style={{borderRadius:"30px"}} />}
+                        {user.photoURL && <img style={globalstyle.profilepicture} style={globalstyle.profilepicture} />}
                         {user.username}
                             </Button>
                         </ListGroupItem>
@@ -331,7 +334,7 @@ export default class Chat extends React.Component {
 
                 <React.Fragment>
                     {
-                    <img src={this.state.user_selected.photoURL} style={{borderRadius:"30px"}} />
+                    <img src={this.state.user_selected.photoURL} style={globalstyle.profilepicture} />
                   
                 
                     }

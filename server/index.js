@@ -3,6 +3,7 @@
 
 const mongoose = require('mongoose');
 
+const fs = require('fs');
 
 mongoose.Promise = global.Promise;
 
@@ -16,17 +17,46 @@ mongoose.connect('mongodb://localhost/paan', {useNewUrlParser: true})
 .catch((err) => console.error(err));
 
 
-const upload = require('express-fileupload')
 
 
 const socket = require('socket.io');
 
 const bodyParser = require('body-parser');
 
+//upload des photos de profil
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination:function(req,file,cb){
+    cb(null,'./static/assets/img/avatars');
+  },
+  filename: function(req,file,cb) {
+    cb(null, req.params.id + '.' + file.mimetype.split('/')[1]);
+  }
+});
+
+const fileFilter = (req,file,cb) => {
+  //rejeter un fichier
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null,true);
+  }
+  else {
+    cb(null,false);
+  }
+}
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 512 * 512 * 5
+  },
+  fileFilter: fileFilter
+});
+
 //models
 const User = require('../models/user');
 const Review =  require('../models/review');
 const ChatMessage = require('../models/chatmessage');
+const Image = require('../models/image');
 
 const express = require('express')
 const next = require('next')
@@ -48,7 +78,6 @@ const adminRoutes = require('../routes/admin');
 
 const server = express();
 
-server.use(upload());
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: true}));
 server.use(function(err, req, res, next) {
@@ -143,8 +172,24 @@ app.prepare()
     })
 
 
-    server.post('/review/picture', (req, res, err) => {
-      console.log(req.files.foo)
+
+    //Upload profile picture
+    server.post('/uploadpp/:id', upload.single('profilePicture'), (req,res,err) => {
+
+    
+    
+      User.findById(req.params.id, function(err,user){
+
+        user.photoURL = req.file.path;
+        user.save( function(err) {
+            if(err) {
+                return res.send(500, err);
+            }
+
+        });
+        })
+      res.status(200).send('ok');
+
     })
 
 
@@ -169,7 +214,7 @@ app.prepare()
       })
     })
 
-    //pas fini
+    //retrouver les derniers messages d'un utilisateur
     server.get('/retrievelast/:user', function(req,res){
 
       ChatMessage.aggregate(

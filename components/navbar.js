@@ -11,6 +11,8 @@ import Chat from './chat/chat'
 
 import io from "socket.io-client";
 
+const globalstyle = require('../config/globalstyle');
+
 
 
 import fetch from 'isomorphic-unfetch'
@@ -103,6 +105,7 @@ export default class NavBar extends React.Component {
         this.toggleisNewMsg = this.toggleisNewMsg.bind(this);
         this.onNewMsg = this.onNewMsg.bind(this);
         this.onUserMsg = this.onUserMsg.bind(this);
+        this.closeChatBox = this.closeChatBox.bind(this);
         this.state = {
             isOpen: false, isMsgOpen:false, isChatBoxOpen:false, reviewlist:null, selected_reviews:null, newMessage:null, unreadMsg:null, firstRender:true, lastMsgs:null,
             userChat: null
@@ -276,6 +279,13 @@ export default class NavBar extends React.Component {
 
     }
 
+    closeChatBox(){
+        this.toggleChatBox();
+        this.setState({
+            userChat: null
+        })
+    }
+
     toggleChatBox() {
         this.setState({
             isChatBoxOpen: !this.state.isChatBoxOpen,
@@ -308,7 +318,7 @@ export default class NavBar extends React.Component {
             this.state.isChatBoxOpen && this.props.user &&
 
 
-            <Chat user={this.props.user} userTo={this.state.userChat} newMsg={this.state.newMessage} toggleNewMsg={this.toggleisNewMsg} closeChatBox={this.toggleChatBox} />
+            <Chat user={this.props.user} userTo={this.state.userChat} newMsg={this.state.newMessage} toggleNewMsg={this.toggleisNewMsg} closeChatBox={this.closeChatBox} />
 
             }
                 
@@ -377,7 +387,7 @@ export default class NavBar extends React.Component {
                                                 <ListGroupItem value={message} style={listgroupitem} onClick={() => (this.onUserMsg(message))} key={message.user._id} tag="a"  action>
                                                     
                                                     <strong>
-                                                        <img style={{borderRadius:"50%"}} src={message.user.photoURL}></img>
+                                                        <img style={globalstyle.profilepicture} src={message.user.photoURL}></img>
                                                         {
                                                             message.user.username
                                                         }
