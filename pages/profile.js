@@ -4,6 +4,8 @@ import React from 'react'
 
 import Router from 'next/router'
 
+
+import {Row} from 'reactstrap';
 export default class Profile extends React.Component{
 
 
@@ -41,10 +43,23 @@ export default class Profile extends React.Component{
 
     render(){
         return(
+            this.state.user?
             <Page>
+                <Row style={{justifyContent:"center"}}>
+                <img src={this.state.user.photoURL} style={{borderRadius:"50%"}}></img>
                 {
-                    this.state.user && this.state.user.username
+                   
+                    <h1>{
+                        this.state.user.username
+                    }</h1>
                 }
+                </Row>
+
+            Changer ma photo de profil
+                
+            </Page>
+            :
+            <Page>
             </Page>
             
         )

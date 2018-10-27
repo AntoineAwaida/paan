@@ -16,7 +16,7 @@ render() {
             
             <React.Fragment>
             <Col>
-            <Link href={`/profile/`}>
+            <Link href={`/profile`}>
                 <img style={{borderRadius:"50px", marginTop:"8px", cursor:"pointer"}} src={this.props.user.photoURL}/>
             </Link>
             </Col>
