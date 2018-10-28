@@ -31,11 +31,14 @@ class Admin extends React.Component {
         this.editReview= this.editReview.bind(this);
     }
 
-    async componentWillMount(){
-
         
-        const api = 'http://localhost:3000/retrieveuser'
-        const res = await fetch(api)
+        
+
+    async componentDidMount(){
+
+        let api = 'http://localhost:3000/retrieveuser'
+        let res = await fetch(api)
+        let data = null;
     
         if (res.status === 204){
     
@@ -55,19 +58,17 @@ class Admin extends React.Component {
 
         }
         
-        }
 
-    async componentDidMount(){
-
-        const api = 'http://localhost:3000/review';
-        const res = await fetch(api)
-        const data = await res.json()
+        api = 'http://localhost:3000/review';
+        res = await fetch(api)
+        data = await res.json()
     
         this.setState({
             reviewlist: data
         })
 
     }
+    
 
     async componentDidUpdate(){
 

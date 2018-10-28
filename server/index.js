@@ -53,10 +53,15 @@ const upload = multer({
 });
 
 //models
+
 const User = require('../models/user');
 const Review =  require('../models/review');
 const ChatMessage = require('../models/chatmessage');
 const Image = require('../models/image');
+const Commentaire = require('../models/commentaire');
+
+
+//
 
 const express = require('express')
 const next = require('next')
@@ -190,6 +195,9 @@ app.prepare()
 
       User.findById(req.params.id, function(err,user){
         if (err) return next(err);
+        if (!req.body.name){
+          return res.status(500).send("Pas d'utilisateur renseigné...")
+        }
         user.username = req.body.name;
         user.save();
 
@@ -223,15 +231,41 @@ app.prepare()
         })
       });
 
-    
-      
-    
-      
-      
-     
-
       
     })
+
+
+
+    //Commentaires
+
+      //Retrouver les commentaires
+
+      server.get('/retrievecommentaries/:id', (req,res,err) => {
+
+        Commentaire.find({article:req.params.id},null,{sort:'-date'}, function(err,commentaires){
+          if(err) return next(err);
+
+          res.json(commentaires);
+        })
+
+      })
+
+
+      //Ajouter un commentaire
+
+      server.post('/addcommentary', (req,res,err) => {
+
+        let commentaire = new Commentaire(req.body);
+        commentaire.save(function(err){
+          if(err){
+            res.status(500).send(err);
+          }
+        })
+        res.status(200).send("Commentaire bien envoyé.")
+
+        
+
+      })
 
 
     //Chat API

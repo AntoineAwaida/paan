@@ -7,20 +7,29 @@ import Router from 'next/router'
 import axios from 'axios';
 
 
-import {Alert, Row, Form, FormGroup, Label,Input, Button} from 'reactstrap';
+import {Alert, Row, Form, FormGroup, Label,Input, Button, FormFeedback} from 'reactstrap';
+
+
+function validatePassword(password){
+    var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+    return re.test(String(password));
+}
 export default class Profile extends React.Component{
 
 
     constructor(props){
 
         super(props);
-        this.state = {user:null, profilepicture:null, submitErrorMsg:null, isSubmitted:null, newName: null, newPassword:null};
+        this.state = {user:null, profilepicture:null, submitErrorMsg:null, isSubmitted:null, newName: null, newPassword:null, invalidPassword:false};
         this.handlePictureSubmit = this.handlePictureSubmit.bind(this);
         this.handlePictureChange = this.handlePictureChange.bind(this);
+        this.handlePasswordSubmit = this.handlePasswordSubmit.bind(this);
         this.handleNameSubmit = this.handleNameSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
 
     }
+
+    
 
 
     handleChange(event) {
@@ -30,7 +39,8 @@ export default class Profile extends React.Component{
 
 
         this.setState({
-            [name]: value
+            [name]: value,
+            invalidPassword:false
         })
 
         
@@ -45,24 +55,32 @@ export default class Profile extends React.Component{
 
         const data = {name: this.state.newPassword}
 
+     
+
+        
+
         // à changer
-        if (this.state.newPassword.length > 3){
+        if (validatePassword(this.state.newPassword)){
 
-            axios('/newpassword/' + this.state.user._id, {
-                method: 'put',
-                headers: {
-                  'Accept': 'application/json, text/plain, */*',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-              }).then((response) => {
-                  this.setState({
-                      isSubmitted: response.data,
-                      newPassword:null
-                  })
-              })
+            axios.put('/newpassword/' + this.state.user._id, data)
+            .then( (response) => {
+                this.setState({
+                    isSubmitted: response.data,
+                    newPassword:null
+                })
+            })
+            .catch(error => {
+                this.setState({
+                    submitErrorMsg: error.response.data
+                })
+            })
 
 
+        }
+        else {
+            this.setState({
+                invalidPassword:true
+            })
         }
         
         
@@ -76,22 +94,27 @@ export default class Profile extends React.Component{
 
         const data = {name: this.state.newName}
 
+        console.log(data)
+
         // à changer
         if (this.state.newName.length > 3){
 
-            axios('/newname/' + this.state.user._id, {
-                method: 'put',
-                headers: {
-                  'Accept': 'application/json, text/plain, */*',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-              }).then((response) => {
-                  this.setState({
-                      isSubmitted: response.data,
-                      newName:null
-                  })
-              })
+
+            axios.put('/newname/' + this.state.user._id, data)
+            .then( (response) => {
+                this.setState({
+                    isSubmitted: response.data,
+                    newName:null
+                })
+            })
+            .catch(error => {
+                this.setState({
+                    submitErrorMsg: error.response.data
+                })
+            })
+
+         
+
 
 
         }
@@ -196,7 +219,8 @@ export default class Profile extends React.Component{
                         <Label for="password">
                             Changer mon mot de passe
                         </Label>
-                        <Input type="text" name="newPassword" id="newPassword" onChange={this.handleChange} />
+                        <Input type="password" invalid={this.state.invalidPassword} name="newPassword" id="newPassword" onChange={this.handleChange} />
+                        <FormFeedback tooltip>Mot de passe incorrect. Il doit contenir au moins 8 caractères, des caractères majuscules et minuscules, des chiffres et des lettres.</FormFeedback>
                         
                 </FormGroup>
                 <FormGroup>

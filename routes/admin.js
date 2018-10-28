@@ -13,9 +13,6 @@ app.prepare().then(() => {
 
 
     router.get('/admin', (req,res) => {
-        if(!(req.user)){
-            res.redirect('../auth/login')
-        }
         const page='/admin/admin'
         app.render(req,res,page);
     })
