@@ -19,7 +19,7 @@ render() {
             <React.Fragment>
             <Col>
             <Link href={`/profile`}>
-                <img style={globals.profilepicture} src={globals.domain + this.props.user.photoURL}/>
+                <img style={globals.profilepicture} src={this.props.user.photoURL}/>
             </Link>
             </Col>
             <Col>

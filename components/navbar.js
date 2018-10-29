@@ -179,9 +179,33 @@ export default class NavBar extends React.Component {
 
         let conversations = []
 
+        let user = null;
+
+
         
+
         
-        data.map((conversation) => {
+        let conv =await Promise.all(data.map(async (conversation) => {
+
+            user = await this.retrieveUser(conversation.from)
+            conversation.user = user
+            conversations.push(conversation)
+        
+
+        }));
+
+        await this.setState({
+            lastMsgs:conversations
+        })
+
+        
+
+
+        /*
+        
+        let conv = await Promise.all(data.map((conversation) => {
+
+
 
             this.retrieveUser(conversation.from).then((user) => (
                 conversation.user = user )).then(
@@ -194,7 +218,9 @@ export default class NavBar extends React.Component {
             
 
             
-        })
+        }));
+
+
 
        
 
@@ -203,6 +229,10 @@ export default class NavBar extends React.Component {
         this.setState({
             lastMsgs:conversations
         })
+
+        */
+
+        
 
         
 

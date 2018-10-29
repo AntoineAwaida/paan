@@ -83,6 +83,8 @@ const adminRoutes = require('../routes/admin');
 
 const server = express();
 
+const globals = require('../config/globals');
+
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: true}));
 server.use(function(err, req, res, next) {
@@ -213,13 +215,11 @@ app.prepare()
 
       avatarUpload(req, res, function(err) {
         if (err) {
-            console.log("coucou");
             return res.status(500).send("Erreur au cours de l'envoi de l'image. L'image ne doit pas excéder 512x512 px, et être au format jpeg ou png.");
         }
 
         User.findById(req.params.id, function(err,user){
-
-          user.photoURL = req.file.path;
+          user.photoURL = globals.domain + req.file.path;
           user.save( function(err) {
               if(err) {
                 return  res.status(500).send("Erreur lors de la sauvegarde.");
