@@ -114,8 +114,14 @@ export default class NavBar extends React.Component {
         this.socket = io('localhost:3000');
         this.socket.on('RECEIVE_CHATMESSAGE', function(data){
             addNotification(data);
+            retrieve();
         });
 
+        const retrieve = () => {
+
+            this.retrieveMsg();
+
+        }
         const addNotification = (data) => {
 
             if (this.props.user && data.to == this.props.user._id){
@@ -171,6 +177,8 @@ export default class NavBar extends React.Component {
 
     async retrieveMsg(){
 
+        console.log("je recherche les derniers messages..")
+
 
         //retrouver les derniers messages de chaque conversation avec un utilisateur
         let api = 'http://localhost:3000/retrievelast/' + this.props.user._id;
@@ -185,7 +193,7 @@ export default class NavBar extends React.Component {
         
 
         
-        let conv =await Promise.all(data.map(async (conversation) => {
+        await Promise.all(data.map(async (conversation) => {
 
             user = await this.retrieveUser(conversation.from)
             conversation.user = user
@@ -194,43 +202,13 @@ export default class NavBar extends React.Component {
 
         }));
 
-        await this.setState({
-            lastMsgs:conversations
-        })
+        conversations.sort((a,b) => (a.date > b.date) ? -1 : ((b.date > a.date) ? 1 : 0));
 
-        
-
-
-        /*
-        
-        let conv = await Promise.all(data.map((conversation) => {
-
-
-
-            this.retrieveUser(conversation.from).then((user) => (
-                conversation.user = user )).then(
-                    conversations.push(conversation)
-            
-            )
-                
-            
-
-            
-
-            
-        }));
-
-
-
-       
-
-        
-        
         this.setState({
             lastMsgs:conversations
         })
 
-        */
+        
 
         
 
