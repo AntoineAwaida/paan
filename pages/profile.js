@@ -20,7 +20,10 @@ export default class Profile extends React.Component{
     constructor(props){
 
         super(props);
-        this.state = {user:null, profilepicture:null, submitErrorMsg:null, isSubmitted:null, newName: null, newPassword:null, invalidPassword:false};
+        this.state = {user:null, profilepicture:null, submitErrorMsg:null, isSubmitted:null, newName: null, newPassword:null,
+            newPasswordConf:null,  
+            passwordnotMatch:false,
+            invalidPassword:false};
         this.handlePictureSubmit = this.handlePictureSubmit.bind(this);
         this.handlePictureChange = this.handlePictureChange.bind(this);
         this.handlePasswordSubmit = this.handlePasswordSubmit.bind(this);
@@ -40,11 +43,44 @@ export default class Profile extends React.Component{
 
         this.setState({
             [name]: value,
-            invalidPassword:false
+            invalidPassword:false,
+            passwordnotMatch:false
         })
 
         
 
+
+    }
+
+    formPasswordValidation(data){
+
+        if (validatePassword(data.newPassword) && data.newPassword === data.newPasswordConf){
+
+            return true;
+
+        }
+
+        else {
+
+            if (!validatePassword(data.newPassword)) {
+
+                this.setState({
+                    invalidPassword:true
+                })
+
+            }
+
+            if (!(data.newPassword === data.newPasswordConf)){
+
+                this.setState({
+                    passwordnotMatch:true
+                })
+
+            }
+
+            return false;
+
+        }
 
     }
 
@@ -58,9 +94,7 @@ export default class Profile extends React.Component{
      
 
         
-
-        // à changer
-        if (validatePassword(this.state.newPassword)){
+        if (this.formPasswordValidation(this.state) ==true){
 
             axios.put('/newpassword/' + this.state.user._id, data)
             .then( (response) => {
@@ -77,11 +111,7 @@ export default class Profile extends React.Component{
 
 
         }
-        else {
-            this.setState({
-                invalidPassword:true
-            })
-        }
+        
         
         
 
@@ -94,7 +124,6 @@ export default class Profile extends React.Component{
 
         const data = {name: this.state.newName}
 
-        console.log(data)
 
         // à changer
         if (this.state.newName.length > 3){
@@ -224,6 +253,11 @@ export default class Profile extends React.Component{
                         <Input type="password" invalid={this.state.invalidPassword} name="newPassword" id="newPassword" onChange={this.handleChange} />
                         <FormFeedback tooltip>Mot de passe incorrect. Il doit contenir au moins 8 caractères, des caractères majuscules et minuscules, des chiffres et des lettres.</FormFeedback>
                         
+                </FormGroup>
+                <FormGroup>
+                        <Label for="passwordconf">Répétez le mot de passe</Label>
+                        <Input type="password" invalid={this.state.passwordnotMatch} name="newPasswordConf" id="newPasswordConf" onChange={this.handleChange} />
+                        <FormFeedback tooltip>Les mots de passe ne correspondent pas.</FormFeedback>
                 </FormGroup>
                 <FormGroup>
                         <Button type="submit" value="Submit" color="danger"> Modifier </Button>

@@ -15,6 +15,8 @@ const app = next({ dev })
 
 const passport = require('passport');
 
+const globals = require('../config/globals')
+
 server.use(passport.session());
 
 
@@ -99,12 +101,13 @@ router.post('/signup', function(req,res) {
 
     User.findOne({email:email}, function(err,doc){
         if(err) {
-            console.log('erreur')
+            console.log(err)
+            return res.status(500).send('Erreur lors de l\' inscription. Contactez l\'administrateur.')
         }
         else {
 
             if (doc){
-                console.log('déjà même adresse email')
+                return res.status(500).send('Un utilisateur a déjà la même adresse email!')
             }
 
             else {
@@ -112,17 +115,18 @@ router.post('/signup', function(req,res) {
                 let user = new User({
                     email:email,
                     password:password,
-                    username:username
+                    username:username,
+                    photoURL: globals.domain + 'static/assets/img/avatars/default.png'
                 });
                 console.log(user)
                 user.save(function(err){
 
                     if(err){
-                        console.log(err)
+                        return res.status(500).send('Erreur lors de l\' inscription. Contactez l\'administrateur.')
                     }
 
                     else{
-                        res.redirect('/')
+                        return res.status(200).send("Bien inscrit!")
                     }
 
 

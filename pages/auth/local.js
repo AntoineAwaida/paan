@@ -2,7 +2,9 @@ import React from 'react'
 
 import Page from '../../layouts/main'
 
-import {Form, FormGroup, FormFeedback, Label, Input, Button} from 'reactstrap'
+import {Form, FormGroup, FormFeedback, Label, Input, Button, Alert} from 'reactstrap'
+
+import axios from 'axios'
 
 
 function validateEmail(email) {
@@ -26,7 +28,8 @@ export default class Local extends React.Component {
             passwordconf:'',
             invalidMail:false,
             invalidPassword:false,
-            passwordnotMatch:false
+            passwordnotMatch:false,
+            submitError:null
         };
         this.handleSubmit=this.handleSubmit.bind(this)
         this.handleInputChange=this.handleInputChange.bind(this);
@@ -44,7 +47,8 @@ export default class Local extends React.Component {
 
 
         this.setState({
-            [name]: value
+            [name]: value,
+            submitError:null
         })
 
     }
@@ -66,14 +70,19 @@ export default class Local extends React.Component {
 
     submitData(data){
 
-        fetch('/auth/signup', {
-            method: 'post',
-            headers: {
-              'Accept': 'application/json, text/plain, */*',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-          })
+        axios.post('/auth/signup',data)
+        .then((response) => {
+            window.location = '/'
+        })
+        .catch((error) => {
+            this.setState({
+                submitError:error.response.data,
+                username:'',
+                mail:'',
+                password:'',
+                passwordconf:''
+            })
+        })
 
        
 
@@ -155,6 +164,13 @@ export default class Local extends React.Component {
                         <Button type="submit" value="Submit" color="success"> S'inscrire </Button>
                     </FormGroup>
                 </Form>
+                <Alert isOpen={this.state.submitError ? true : false} color="danger">
+                
+                {
+                    this.state.submitError
+                }
+                
+                </Alert>
             </Page>
         )
     }
