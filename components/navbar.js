@@ -251,7 +251,7 @@ export default class NavBar extends React.Component {
 
         conversations.sort((a,b) => (a.date > b.date) ? -1 : ((b.date > a.date) ? 1 : 0));
 
-        console.log(conversations)
+       
 
         this.setState({
             lastMsgs:conversations

@@ -21,11 +21,6 @@ export default class Article extends React.Component {
         const api = 'http://localhost:3000/retrieveuser'
         const res = await fetch(api)
     
-        if (res.status === 204){
-    
-            Router.push('/auth/login')
-    
-        }
     
         if (res.status === 200){
     
@@ -48,11 +43,13 @@ export default class Article extends React.Component {
                 <ArticleForm title={this.props.data.title} author={this.props.data.author} content={this.props.data.content} />
                 {
                 
-                this.state.user &&
+            
                 <Commentaires article={this.props.data._id} user={this.state.user} />
             
                 }
             </Page>
+
+            
 
         )
 

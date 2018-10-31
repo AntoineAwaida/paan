@@ -21,7 +21,6 @@ export default class Community extends React.Component {
 
 Community.getInitialProps = async function({req}){
 
-  console.log("you")
   const api = 'http://localhost:3000/retrieveuser'
   const res = await fetch(api)
   const data = await res.json()

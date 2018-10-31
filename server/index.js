@@ -61,6 +61,7 @@ const Image = require('../models/image');
 const Commentaire = require('../models/commentaire');
 
 
+
 //
 
 const express = require('express')
@@ -234,9 +235,49 @@ app.prepare()
       
     })
 
+    //suivre un utilisateur
 
+    server.post('/follow', (req,res,err) => {
+
+     
+      User.findById(req.body.follower, function(err,user){
+        if(err) return next(err);
+
+      
+        if (user.following){
+          user.following.push(req.body.following);
+        }
+        else {
+          user.following = new Array(req.body.following);
+        }
+        user.save( function(err){
+          if(err) return next(err);
+        });
+        
+      })
+
+      User.findById(req.body.following, function(err,user){
+        if(err) return next(err);
+
+        if (user.followers){
+          user.followers.push(req.body.follower);
+        }
+        else {
+          user.followers = new Array(req.body.follower);
+        }
+        user.save( function(err){
+          if(err) return next(err);
+        });
+        
+      })
+
+      return res.status(200).send("Vous avez bien souscrit à cet utilisateur.");
+
+
+    })
 
     //Commentaires
+
 
       //Retrouver les commentaires
 

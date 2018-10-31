@@ -11,7 +11,9 @@ let UserSchema = new Schema({
     email: {type:String, required:true},
     password: String,
     photoURL: String,
-    admin: {type:Boolean, default:false}
+    admin: {type:Boolean, default:false},
+    followers: [String],
+    following: [String]
 
 })
 
@@ -35,6 +37,14 @@ UserSchema.pre('save', function(next) {
 
 
     }
+
+    else {
+
+        next();
+
+    }
+
+    
    
 })
 

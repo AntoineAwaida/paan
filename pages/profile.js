@@ -7,7 +7,7 @@ import Router from 'next/router'
 import axios from 'axios';
 
 
-import {Alert, Row, Form, FormGroup, Label,Input, Button, FormFeedback} from 'reactstrap';
+import {Alert, Row, Form, FormGroup, Label,Input, Button, FormFeedback, ListGroupItem, ListGroup} from 'reactstrap';
 
 
 function validatePassword(password){
@@ -212,6 +212,7 @@ export default class Profile extends React.Component{
       this.setState({
         user:data
       })
+
     }
     
     }
@@ -299,7 +300,22 @@ export default class Profile extends React.Component{
             }
             
             </Alert>
-           
+
+            <h1>Mes abonnements</h1> 
+            
+
+            <ListGroup>
+                {
+                    this.state.user.following.map((user_followed) => {
+                        <ListGroupItem>
+                            {user_followed}
+                        </ListGroupItem>
+                    })
+                }
+            </ListGroup>
+
+
+
 
             
             
@@ -307,6 +323,7 @@ export default class Profile extends React.Component{
             </Page>
             :
             <Page>
+                Retrieving data... (loading spin après)
             </Page>
             
         )
