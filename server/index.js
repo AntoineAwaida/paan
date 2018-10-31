@@ -235,6 +235,25 @@ app.prepare()
       
     })
 
+    //arrêter de suivre un utilisateur 
+
+    server.post('/unfollow', (req,res,err) => {
+
+      User.findById(req.body.follower, function(err,user){
+
+        if(err) return next(err);
+
+
+
+      })
+
+      User.findById(req.body.following, function(err,user){
+        
+        if(err) return next(err);
+      })
+
+    })
+
     //suivre un utilisateur
 
     server.post('/follow', (req,res,err) => {

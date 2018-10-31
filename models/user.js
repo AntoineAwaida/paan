@@ -12,8 +12,8 @@ let UserSchema = new Schema({
     password: String,
     photoURL: String,
     admin: {type:Boolean, default:false},
-    followers: [String],
-    following: [String]
+    followers: {type:Array, default:[]},
+    following: {type:Array, default:[]}
 
 })
 

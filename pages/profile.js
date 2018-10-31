@@ -6,8 +6,10 @@ import Router from 'next/router'
 
 import axios from 'axios';
 
+const globals = require('../config/globals')
 
-import {Alert, Row, Form, FormGroup, Label,Input, Button, FormFeedback, ListGroupItem, ListGroup} from 'reactstrap';
+
+import {Alert, Row, Form, FormGroup, Label,Input, Button, FormFeedback, ListGroup, ListGroupItem} from 'reactstrap';
 
 
 function validatePassword(password){
@@ -222,7 +224,7 @@ export default class Profile extends React.Component{
             this.state.user?
             <Page>
                 <Row style={{justifyContent:"center"}}>
-                <img src={this.state.user.photoURL} style={{borderRadius:"50%", height:"50px", width:"50px"}}></img>
+                <img src={this.state.user.photoURL} style={globals.profilepicture}></img>
                 {
                    
                     <h1>{
@@ -301,18 +303,26 @@ export default class Profile extends React.Component{
             
             </Alert>
 
+            <React.Fragment>
             <h1>Mes abonnements</h1> 
-            
-
+        
             <ListGroup>
                 {
-                    this.state.user.following.map((user_followed) => {
+                    this.state.user.following && this.state.user.following.map((followed_user) => (
                         <ListGroupItem>
-                            {user_followed}
+                            <h4><img src={followed_user.photoURL} style={globals.profilepicture}></img>
+                            &nbsp; {followed_user.username}</h4>
                         </ListGroupItem>
-                    })
+                    ))
                 }
             </ListGroup>
+         
+
+
+
+            </React.Fragment>
+
+            
 
 
 

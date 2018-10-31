@@ -39,6 +39,7 @@ export default class Commentaires extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.followUser = this.followUser.bind(this);
+        this.unfollowUser = this.unfollowUser.bind(this);
 
     }
 
@@ -54,21 +55,6 @@ export default class Commentaires extends React.Component {
 
     }
 
-    async followed(commentaryuser, me){
-
-        let api = globals.domain + 'isfollowed/' + me + '/' + commentaryuser;
-        let res = await fetch(api);
-        let data = await res.json();
-
-        console.log(data)
-
-        if (data){
-            return true;
-        }
-        return false;
-
-    }
-
 
     async componentDidMount(){
 
@@ -80,7 +66,6 @@ export default class Commentaires extends React.Component {
 
         
         let user = null;
-        let followed = false;
 
         let commentaires=[]
 
@@ -148,9 +133,26 @@ export default class Commentaires extends React.Component {
 
     }
 
-    followUser(userid){
+    unfollowUser(userid){
 
         let data = {follower: this.props.user._id, following: userid}
+        axios.post('/unfollow', data).
+        then( (response) => {
+            this.setState({
+                submitted:response.data
+            })
+        })
+        .catch(error => {
+            this.setState({
+                submitError:error.response.data
+            })
+        })
+
+    }
+
+    followUser(user){
+
+        let data = {follower: this.props.user, following: user}
         axios.post('/follow', data).
         then( (response) => {
             this.setState({
@@ -235,14 +237,17 @@ export default class Commentaires extends React.Component {
                                         //il faut qu'on soit connecté, et qu'on soit pas l'auteur du commentaire, pour pouvoir s'abonner...
                                         (this.props.user && this.props.user._id != commentaire.completeuser._id) ?
                                             //l'utilisateur est-il déjà abonné à ce gars?
-                                            this.props.user.following.includes(commentaire.completeuser._id) ?
+                                           this.props.user.following.some(function(o){
+                                               return o._id == commentaire.completeuser._id
+                                           }) ?
+                                            
                                             <Starstyle followed>
-                                            <FontAwesomeIcon icon={faStar} />
+                                            <FontAwesomeIcon icon={faStar} onClick={() => this.unfollowUser(commentaire.completuser._id)} />
                                             </Starstyle>
                                             
                                             :
                                             <Starstyle>
-                                             <FontAwesomeIcon icon={faStar} onClick={() => this.followUser(commentaire.completeuser._id)} />
+                                             <FontAwesomeIcon icon={faStar} onClick={() => this.followUser(commentaire.completeuser)} />
                                             </Starstyle> 
                                            
                                         : ''
