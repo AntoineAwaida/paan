@@ -206,7 +206,7 @@ export default class Commentaires extends React.Component {
                 
                 </Alert>
 
-                ATTENTION JE SUIS VULNERABLE AUX FAILLES XSS ICI!!
+                Pas vulnérable aux failles XSS grâce à react..
                 
             </React.Fragment>
             

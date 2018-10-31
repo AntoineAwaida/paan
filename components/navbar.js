@@ -174,10 +174,24 @@ export default class NavBar extends React.Component {
 
     }
 
+    async retrievelastMsg(conversation){
+
+
+        
+        let api = 'http://localhost:3000/getlastmsgconversation/' + conversation.from + '/' + conversation.to;
+        let res = await fetch(api)
+        let data = await res.json()
+
+
+        return data;
+
+
+    }
+
 
     async retrieveMsg(){
 
-        console.log("je recherche les derniers messages..")
+    
 
 
         //retrouver les derniers messages de chaque conversation avec un utilisateur
@@ -185,9 +199,29 @@ export default class NavBar extends React.Component {
         let res = await fetch(api)
         let data = await res.json()
 
+        api = 'http://localhost:3000/retrievefromlast/' + this.props.user._id;
+        res = await fetch(api)
+        let data2 = await res.json()
+
+
+        data = data.concat(data2);
+
         let conversations = []
 
         let user = null;
+
+        let lastmsg = null;
+
+
+        for (var i=0, len = data.length; i< len; i++){
+            for (var j = 0, len = data.length; j<len; j++){
+                
+                if(data[i] && data[j] && data[i].from == data[j].to && data[i].to == data[j].from){
+                    delete data[i]
+                }
+            }
+        }
+
 
 
         
@@ -195,7 +229,20 @@ export default class NavBar extends React.Component {
         
         await Promise.all(data.map(async (conversation) => {
 
-            user = await this.retrieveUser(conversation.from)
+
+        
+            lastmsg = await this.retrievelastMsg(conversation);
+
+            await (conversation.message = lastmsg.content);
+
+            conversation.from == this.props.user._id ?
+            user = await this.retrieveUser(conversation.to)
+            :
+            user = await this.retrieveUser(conversation.from);
+            
+
+            
+
             conversation.user = user
             conversations.push(conversation)
         
@@ -203,6 +250,8 @@ export default class NavBar extends React.Component {
         }));
 
         conversations.sort((a,b) => (a.date > b.date) ? -1 : ((b.date > a.date) ? 1 : 0));
+
+        console.log(conversations)
 
         this.setState({
             lastMsgs:conversations

@@ -289,16 +289,31 @@ app.prepare()
       })
     })
 
-    //retrouver les derniers messages d'un utilisateur
-    server.get('/retrievelast/:user', function(req,res){
+    server.get('/getlastmsgconversation/:from/:to', function(req,res){
+      ChatMessage.findOne({$or: [{from:req.params.to,to:req.params.from},{from:req.params.from,to:req.params.to}]},null, {sort:'-date'}, function(err,message){
+        if(err) return next(err);
+        
+        res.json(message);
+      })
+    })
 
+    server.get('/retrievefromlast/:user', function(req,res){
+
+
+      
       ChatMessage.aggregate(
         [
             // Matching pipeline, similar to find
             { 
-                "$match": { 
-                    "to": req.params.user
-                }
+              "$match": { 
+
+                "$or": [
+                  {
+                    "from":req.params.user
+                  }
+                ]
+                  
+              }
             },
             // Sorting pipeline
             { 
@@ -309,7 +324,10 @@ app.prepare()
             // Grouping pipeline
             {
                 "$group": {
-                    "_id": "$from",
+                    "_id": "$to",
+                    "from": {
+                      "$first": "$from"
+                    },
                     "message": {
                         "$first": "$content" 
                     },
@@ -322,6 +340,65 @@ app.prepare()
             {
                  "$project": { 
                     "_id": 0,
+                    "from":1,
+                    "to": "$_id",
+                    "message": 1,
+                    "date": 1
+                }
+            }
+        ],
+        function(err,results) {
+            if (err) throw err;
+            res.json(results);
+        }
+    )
+  });
+
+    //retrouver les derniers messages d'un utilisateur
+    server.get('/retrievelast/:user', function(req,res){
+
+
+      
+      ChatMessage.aggregate(
+        [
+            // Matching pipeline, similar to find
+            { 
+              "$match": { 
+
+                "$or": [
+                  {
+                    "to":req.params.user
+                  }
+                ]
+                  
+              }
+            },
+            // Sorting pipeline
+            { 
+                "$sort": { 
+                    "date": -1 
+                } 
+            },
+            // Grouping pipeline
+            {
+                "$group": {
+                    "_id": "$from",
+                    "to": {
+                      "$first": "$to"
+                    },
+                    "message": {
+                        "$first": "$content" 
+                    },
+                    "date": {
+                        "$first": "$date" 
+                    }
+                }
+            },
+            // Project pipeline, similar to select
+            {
+                 "$project": { 
+                    "_id": 0,
+                    "to":1,
                     "from": "$_id",
                     "message": 1,
                     "date": 1
